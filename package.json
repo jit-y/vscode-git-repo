@@ -10,16 +10,25 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-git-repo.helloWorld"
+		"onCommand:vscode-git-repo.selectRepositoryAndOpen"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-git-repo.helloWorld",
-				"title": "Hello World"
+				"command": "vscode-git-repo.selectRepositoryAndOpen",
+				"title": "Selcet repository and Open"
 			}
-		]
+		],
+		"configuration": {
+			"title": "vscode-git-repo",
+			"properties": {
+				"vscode-git-repo.rootPath": {
+					"type": "string",
+					"description": ""
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
