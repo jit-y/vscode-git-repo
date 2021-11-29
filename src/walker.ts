@@ -1,22 +1,22 @@
 import { workspace } from "vscode";
-import { File } from "./file";
+import { RepoFile } from "./repoFile";
 
 const fs = workspace.fs;
 
 class walker {
-  callbackFn: (file: File) => {};
+  callbackFn: (file: RepoFile) => {};
 
-  constructor(callbackFn: (file: File) => {}) {
+  constructor(callbackFn: (file: RepoFile) => {}) {
     this.callbackFn = callbackFn;
   }
 
-  async walk(file: File): Promise<void[]> {
+  async walk(file: RepoFile): Promise<void[]> {
     this.callbackFn(file);
 
     const dir = await fs.readDirectory(file.uri);
 
     return Promise.all(dir.map(async item => {
-      const f = new File(item[0], item[1]);
+      const f = new RepoFile(item[0], item[1]);
 
       await this.walk(f);
 

@@ -1,6 +1,6 @@
 import { FileType, Uri } from "vscode";
 
-export class File {
+export class RepoFile {
   filetype: FileType;
   private filepath: string;
 
