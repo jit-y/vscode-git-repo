@@ -15,7 +15,7 @@ class walker {
 
     const dir = await fs.readDirectory(file.uri);
 
-    return Promise.all(dir.map(async item => {
+    return await Promise.all(dir.map(async item => {
       const f = new RepoFile(item[0], item[1]);
 
       await this.walk(f);
