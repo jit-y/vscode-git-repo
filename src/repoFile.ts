@@ -13,7 +13,7 @@ export class RepoFile {
     return Uri.parse(this.filepath);
   }
 
-  idFile(): boolean {
+  isFile(): boolean {
     return this.filetype === FileType.File;
   }
 
