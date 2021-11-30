@@ -3,24 +3,34 @@ import { RepoFile } from "./repoFile";
 
 const fs = workspace.fs;
 
-class walker {
-  callbackFn: (file: RepoFile) => {};
+export const WalkerStatus = {
+  Continue: "Continue",
+  SkipChildren: "SkipChildren"
+};
+type WalkerOp = typeof WalkerStatus[keyof typeof WalkerStatus];
 
-  constructor(callbackFn: (file: RepoFile) => {}) {
+export class Walker {
+  callbackFn: (file: RepoFile) => WalkerOp;
+
+  constructor(callbackFn: (file: RepoFile) => WalkerOp) {
     this.callbackFn = callbackFn;
   }
 
-  async walk(file: RepoFile): Promise<void[]> {
-    this.callbackFn(file);
+  async walk(file: RepoFile): Promise<null> {
+    const res = this.callbackFn(file);
+    if (res === WalkerStatus.SkipChildren) {
+      return null;
+    }
 
     const dir = await fs.readDirectory(file.uri);
-
-    return await Promise.all(dir.map(async item => {
+    await Promise.all(dir.map(async item => {
       const f = new RepoFile(item[0], item[1]);
 
       await this.walk(f);
 
       return;
     }));
+
+    return null;
   }
 }
