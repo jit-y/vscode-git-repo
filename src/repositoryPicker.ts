@@ -1,5 +1,10 @@
 import { QuickPick, QuickPickItem, Uri } from "vscode";
 import * as vscode from "vscode";
+import { Walker, WalkerOp } from "./walker";
+import { RepoFile } from "./repoFile";
+import { Worker } from "cluster";
+
+const fs = vscode.workspace.fs;
 
 export class RepositoryPickItem implements QuickPickItem {
   label: string;
@@ -15,15 +20,16 @@ export class RepositoryPickItem implements QuickPickItem {
 }
 
 export class RepositoryPicker {
-  private picker: QuickPick<RepositoryPickItem>;
+  private readonly picker: QuickPick<RepositoryPickItem>;
 
-  constructor(items: ReadonlyArray<RepositoryPickItem>) {
+  constructor(private readonly rootUris: Uri[]) {
     this.picker = this.initPicker();
-    this.picker.items = items;
   }
 
   async run() {
     this.picker.enabled = false;
+
+    await this.setPickItems();
 
     this.show();
 
@@ -58,5 +64,39 @@ export class RepositoryPicker {
 
   onDidHide() {
     this.dispose();
+  }
+
+  async setPickItems() {
+    const uri = this.rootUris[0];
+    const stat = await fs.stat(uri);
+    const repoFile = new RepoFile(uri.fsPath, stat.type)
+    const items: RepositoryPickItem[] = [];
+
+    const callbackFn = async (repoFile: RepoFile): Promise<WalkerOp> => {
+      if (!repoFile.isDir()) {
+        return WalkerOp.Continue;
+      }
+
+      const gitUri = Uri.joinPath(repoFile.uri, ".git");
+
+      try {
+        const stat = await fs.stat(gitUri);
+        if (stat.type === vscode.FileType.SymbolicLink) {
+          return WalkerOp.Continue;
+        }
+
+        const pickItem = new RepositoryPickItem(repoFile.uri.fsPath, repoFile.uri.fsPath);
+        items.push(pickItem);
+
+        return WalkerOp.SkipChildren;
+      } catch (e) { }
+
+      return WalkerOp.Continue;
+    };
+
+    const walker = new Walker(callbackFn);
+    await walker.walk(repoFile);
+
+    this.picker.items = items;
   }
 }
