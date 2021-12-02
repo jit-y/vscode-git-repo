@@ -2,19 +2,19 @@ import { QuickPick, QuickPickItem, Uri } from "vscode";
 import * as vscode from "vscode";
 import { Walker, WalkerOp } from "./walker";
 import { RepoFile } from "./repoFile";
-import { Worker } from "cluster";
+import * as child_process from "child_process";
 
 const fs = vscode.workspace.fs;
 
 export class RepositoryPickItem implements QuickPickItem {
-  label: string;
-  alwaysShow: boolean;
+  readonly label: string;
+  readonly alwaysShow: boolean;
 
-  uri: Uri;
+  readonly uri: Uri;
 
-  constructor(path: string, label: string) {
-    this.uri = Uri.from({ scheme: "vscode", path: path });
-    this.label = label;
+  constructor(uri: Uri) {
+    this.uri = uri;
+    this.label = uri.fsPath;
     this.alwaysShow = true
   }
 }
@@ -59,6 +59,8 @@ export class RepositoryPicker {
     if (item != null) {
       this.dispose();
       vscode.env.openExternal(item.uri);
+
+      vscode.commands.executeCommand("vscode.openFolder", item.uri, { forceNewWindow: true });
     }
   }
 
@@ -84,14 +86,14 @@ export class RepositoryPicker {
         if (stat.type === vscode.FileType.SymbolicLink) {
           return WalkerOp.Continue;
         }
+      } catch (_e) {
+        return WalkerOp.Continue;
+      }
 
-        const pickItem = new RepositoryPickItem(repoFile.uri.fsPath, repoFile.uri.fsPath);
-        items.push(pickItem);
+      const pickItem = new RepositoryPickItem(repoFile.uri);
+      items.push(pickItem);
 
-        return WalkerOp.SkipChildren;
-      } catch (e) { }
-
-      return WalkerOp.Continue;
+      return WalkerOp.SkipChildren;
     };
 
     const walker = new Walker(callbackFn);
