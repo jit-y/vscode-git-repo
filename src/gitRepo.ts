@@ -1,12 +1,11 @@
-import * as vscode from "vscode";
 import { Uri } from "vscode";
-import { RepositoryPicker, RepositoryPickItem } from "./repositoryPicker";
+import { OpenStrategy, RepositoryPicker } from "./repositoryPicker";
 
 export class GitRepo {
   constructor(private rootUri: Uri) { }
 
-  async select() {
-    const picker = new RepositoryPicker([this.rootUri]);
+  async open(openStrategy?: OpenStrategy) {
+    const picker = new RepositoryPicker([this.rootUri], openStrategy);
     picker.run();
   }
 }

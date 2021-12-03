@@ -2,7 +2,6 @@ import { QuickPick, QuickPickItem, Uri } from "vscode";
 import * as vscode from "vscode";
 import { Walker, WalkerOp } from "./walker";
 import { RepoFile } from "./repoFile";
-import * as child_process from "child_process";
 
 const fs = vscode.workspace.fs;
 
@@ -19,11 +18,19 @@ export class RepositoryPickItem implements QuickPickItem {
   }
 }
 
+export const OpenStrategy = {
+  Folder: "Folder",
+  Workspace: "Workspace"
+};
+export type OpenStrategy = typeof OpenStrategy[keyof typeof OpenStrategy];
+
 export class RepositoryPicker {
   private readonly picker: QuickPick<RepositoryPickItem>;
+  private readonly openStrategy: OpenStrategy;
 
-  constructor(private readonly rootUris: Uri[]) {
+  constructor(private readonly rootUris: Uri[], openStrategy?: OpenStrategy) {
     this.picker = this.initPicker();
+    this.openStrategy = openStrategy || OpenStrategy.Folder;
   }
 
   async run() {
@@ -58,14 +65,28 @@ export class RepositoryPicker {
 
     if (item != null) {
       this.dispose();
-      vscode.env.openExternal(item.uri);
 
-      vscode.commands.executeCommand("vscode.openFolder", item.uri, { forceNewWindow: true });
+      this.openUri(item.uri);
     }
   }
 
   onDidHide() {
     this.dispose();
+  }
+
+  openUri(uri: Uri) {
+    switch (this.openStrategy) {
+      case OpenStrategy.Folder:
+        vscode.commands.executeCommand("vscode.openFolder", uri, { forceNewWindow: true });
+      case OpenStrategy.Workspace:
+        vscode.workspace.updateWorkspaceFolders(
+          vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+          null,
+          { uri: uri },
+        );
+      default:
+        console.error("undefined OpenStrategy");
+    }
   }
 
   async setPickItems() {

@@ -10,14 +10,19 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-git-repo.selectRepositoryAndOpen"
+		"onCommand:vscode-git-repo.openAsFolder",
+		"onCommand:vscode-git-repo.openAsWorkspace"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-git-repo.selectRepositoryAndOpen",
-				"title": "Selcet repository and Open"
+				"command": "vscode-git-repo.openAsFolder",
+				"title": "Open the selected Repository as a folder"
+			},
+			{
+				"command": "vscode-git-repo.openAsWorkspace",
+				"title": "Open the selected Repository as a workspace"
 			}
 		],
 		"configuration": {
