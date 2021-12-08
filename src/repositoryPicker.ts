@@ -1,7 +1,7 @@
 import { QuickPick, QuickPickItem, Uri } from "vscode";
 import * as vscode from "vscode";
 import { localRepositories, Walker, WalkerOp } from "./walker";
-import { RepoFile } from "./repoFile";
+import { File } from "./file";
 
 const fs = vscode.workspace.fs;
 
@@ -92,9 +92,9 @@ export class RepositoryPicker {
   async setPickItems() {
     const uri = this.rootUris[0];
     const stat = await fs.stat(uri);
-    const repoFile = new RepoFile(uri.fsPath, stat.type)
+    const file = new File(uri.fsPath, stat.type)
 
-    const items = await localRepositories<RepositoryPickItem>(repoFile, f => new RepositoryPickItem(f.uri));
+    const items = await localRepositories<RepositoryPickItem>(file, f => new RepositoryPickItem(f.uri));
 
     this.picker.items = items;
   }
