@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import { workspace, Uri } from "vscode";
 import { RepoFile } from "./repoFile";
 
@@ -34,4 +35,35 @@ export class Walker {
 
     return null;
   }
+}
+
+export async function localRepositories<T>(root: RepoFile, intoFn: (file: RepoFile) => T): Promise<T[]> {
+  const items: T[] = [];
+
+  const callbackFn = async (repoFile: RepoFile): Promise<WalkerOp> => {
+    if (!repoFile.isDir()) {
+      return WalkerOp.Continue;
+    }
+
+    const gitUri = Uri.joinPath(repoFile.uri, ".git");
+
+    try {
+      const stat = await fs.stat(gitUri);
+      if (stat.type === vscode.FileType.SymbolicLink) {
+        return WalkerOp.Continue;
+      }
+    } catch (_e) {
+      return WalkerOp.Continue;
+    }
+
+    const item = intoFn(repoFile);
+    items.push(item);
+
+    return WalkerOp.SkipChildren;
+  };
+
+  const walker = new Walker(callbackFn);
+  await walker.walk(root);
+
+  return items;
 }
