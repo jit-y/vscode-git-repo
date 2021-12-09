@@ -1,7 +1,7 @@
 import { Uri } from "vscode";
 import { OpenStrategy, RepositoryPicker } from "./repositoryPicker";
 
-export class GitRepo {
+export class RepositoryManager {
   #rootUri: Uri
 
   constructor(rootUri: Uri) {
