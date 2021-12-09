@@ -3,12 +3,12 @@ import { GitExtension } from "./@types/git";
 import { Err, Ok, Result } from "./result";
 
 export class GitCommand {
-  private readonly gitApi;
-  private readonly gitPath;
+  readonly #gitApi;
+  readonly #gitPath;
 
   constructor(extension: vscode.Extension<GitExtension>) {
-    this.gitApi = extension.exports.getAPI(1);
-    this.gitPath = this.gitApi.git.path;
+    this.#gitApi = extension.exports.getAPI(1);
+    this.#gitPath = this.#gitApi.git.path;
   }
 }
 

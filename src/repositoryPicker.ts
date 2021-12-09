@@ -25,22 +25,24 @@ export const OpenStrategy = {
 export type OpenStrategy = typeof OpenStrategy[keyof typeof OpenStrategy];
 
 export class RepositoryPicker {
-  private readonly picker: QuickPick<RepositoryPickItem>;
-  private readonly openStrategy: OpenStrategy;
+  readonly #picker: QuickPick<RepositoryPickItem>;
+  readonly #openStrategy: OpenStrategy;
+  readonly #rootUris: Uri[];
 
-  constructor(private readonly rootUris: Uri[], openStrategy?: OpenStrategy) {
-    this.picker = this.initPicker();
-    this.openStrategy = openStrategy || OpenStrategy.Folder;
+  constructor(rootUris: Uri[], openStrategy?: OpenStrategy) {
+    this.#rootUris = rootUris;
+    this.#picker = this.initPicker();
+    this.#openStrategy = openStrategy || OpenStrategy.Folder;
   }
 
   async run() {
-    this.picker.enabled = false;
+    this.#picker.enabled = false;
 
     await this.setPickItems();
 
     this.show();
 
-    this.picker.enabled = true;
+    this.#picker.enabled = true;
   }
 
   initPicker(): QuickPick<RepositoryPickItem> {
@@ -53,15 +55,15 @@ export class RepositoryPicker {
   }
 
   show() {
-    this.picker.show();
+    this.#picker.show();
   }
 
   dispose() {
-    this.picker.dispose();
+    this.#picker.dispose();
   }
 
   onDidAccept() {
-    const item = this.picker.selectedItems[0];
+    const item = this.#picker.selectedItems[0];
 
     if (item != null) {
       this.dispose();
@@ -75,7 +77,7 @@ export class RepositoryPicker {
   }
 
   openUri(uri: Uri) {
-    switch (this.openStrategy) {
+    switch (this.#openStrategy) {
       case OpenStrategy.Folder:
         vscode.commands.executeCommand("vscode.openFolder", uri, { forceNewWindow: true });
       case OpenStrategy.Workspace:
@@ -90,12 +92,12 @@ export class RepositoryPicker {
   }
 
   async setPickItems() {
-    const uri = this.rootUris[0];
+    const uri = this.#rootUris[0];
     const stat = await fs.stat(uri);
     const file = new File(uri.fsPath, stat.type)
 
     const items = await localRepositories<RepositoryPickItem>(file, f => new RepositoryPickItem(f.uri));
 
-    this.picker.items = items;
+    this.#picker.items = items;
   }
 }

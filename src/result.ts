@@ -11,7 +11,10 @@ export const Ok = <T>(value: T) => new OkType(value);
 export const Err = <E>(value: E) => new ErrType(value);
 
 export class OkType<T> implements ResultBase<T, never> {
-  constructor(private readonly val: T) { }
+  readonly #val: T;
+  constructor(readonly val: T) {
+    this.#val = val;
+  }
 
   isOk(): this is OkType<T> {
     return true;
@@ -22,7 +25,7 @@ export class OkType<T> implements ResultBase<T, never> {
   }
 
   map<U>(fn: (value: T) => U): OkType<U> {
-    return Ok(fn(this.val));
+    return Ok(fn(this.#val));
   }
 
   mapErr<U>(fn: unknown): OkType<T> {
@@ -31,7 +34,11 @@ export class OkType<T> implements ResultBase<T, never> {
 }
 
 export class ErrType<E> implements ResultBase<never, E> {
-  constructor(private readonly val: E) { }
+  readonly #val: E;
+
+  constructor(val: E) {
+    this.#val = val;
+  }
 
   isOk(): this is ErrType<E> {
     return true;
@@ -46,6 +53,6 @@ export class ErrType<E> implements ResultBase<never, E> {
   }
 
   mapErr<U>(fn: (value: E) => U): ErrType<U> {
-    return Err(fn(this.val));
+    return Err(fn(this.#val));
   }
 }

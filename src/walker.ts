@@ -11,14 +11,14 @@ export const WalkerOp = {
 export type WalkerOp = typeof WalkerOp[keyof typeof WalkerOp];
 
 export class Walker {
-  callbackFn: (file: File) => Promise<WalkerOp>;
+  readonly #callbackFn: (file: File) => Promise<WalkerOp>;
 
   constructor(callbackFn: (file: File) => Promise<WalkerOp>) {
-    this.callbackFn = callbackFn;
+    this.#callbackFn = callbackFn;
   }
 
   async walk(file: File): Promise<null> {
-    const res = await this.callbackFn(file);
+    const res = await this.#callbackFn(file);
     if (res === WalkerOp.SkipChildren) {
       return null;
     }
