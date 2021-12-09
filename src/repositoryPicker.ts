@@ -80,14 +80,17 @@ export class RepositoryPicker {
     switch (this.#openStrategy) {
       case OpenStrategy.Folder:
         vscode.commands.executeCommand("vscode.openFolder", uri, { forceNewWindow: true });
+        break;
       case OpenStrategy.Workspace:
         vscode.workspace.updateWorkspaceFolders(
           vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
           null,
           { uri: uri },
         );
+        break;
       default:
         console.error("undefined OpenStrategy");
+        break;
     }
   }
 
