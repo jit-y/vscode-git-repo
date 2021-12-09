@@ -1,6 +1,6 @@
 {
-	"name": "vscode-git-repo",
-	"displayName": "vscode-git-repo",
+	"name": "vscode-repository-manager",
+	"displayName": "vscode-repository-manager",
 	"description": "",
 	"version": "0.0.1",
 	"engines": {
@@ -10,25 +10,25 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-git-repo.openAsFolder",
-		"onCommand:vscode-git-repo.openAsWorkspace"
+		"onCommand:vscode-repository-manager.openAsFolder",
+		"onCommand:vscode-repository-manager.openAsWorkspace"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-git-repo.openAsFolder",
+				"command": "vscode-repository-manager.openAsFolder",
 				"title": "Open the selected Repository as a folder"
 			},
 			{
-				"command": "vscode-git-repo.openAsWorkspace",
+				"command": "vscode-repository-manager.openAsWorkspace",
 				"title": "Open the selected Repository as a workspace"
 			}
 		],
 		"configuration": {
-			"title": "vscode-git-repo",
+			"title": "vscode-repository-manager",
 			"properties": {
-				"vscode-git-repo.rootPath": {
+				"vscode-repository-manager.rootPath": {
 					"type": "string",
 					"description": ""
 				}

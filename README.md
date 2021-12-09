@@ -1,6 +1,6 @@
-# vscode-git-repo README
+# vscode-repository-manager README
 
-This is the README for your extension "vscode-git-repo". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "vscode-repository-manager". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
