@@ -4,23 +4,13 @@ import * as vscode from 'vscode';
 import { GitRepo } from './gitRepo';
 import { OpenStrategy } from './repositoryPicker';
 
-function openAsFolder() {
+function openAs(strategy: OpenStrategy) {
 	const rootPath = vscode.workspace.getConfiguration().get<string>("vscode-git-repo.rootPath");
 
 	if (rootPath != undefined) {
 		const uri = vscode.Uri.parse(rootPath);
 		const gitRepo = new GitRepo(uri);
-		gitRepo.open(OpenStrategy.Folder);
-	}
-}
-
-function openAsWorkspace() {
-	const rootPath = vscode.workspace.getConfiguration().get<string>("vscode-git-repo.rootPath");
-
-	if (rootPath != undefined) {
-		const uri = vscode.Uri.parse(rootPath);
-		const gitRepo = new GitRepo(uri);
-		gitRepo.open(OpenStrategy.Workspace);
+		gitRepo.open(strategy);
 	}
 }
 
@@ -36,8 +26,19 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-git-repo.openAsFolder', openAsFolder));
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-git-repo.openAsWorkspace', openAsWorkspace));
+	context.subscriptions.push(
+		vscode.commands.registerCommand(
+			'vscode-repository-manager.openAsFolder',
+			openAs.bind(null, OpenStrategy.Folder)
+		)
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand(
+			'vscode-repository-manager.openAsWorkspace',
+
+			openAs.bind(null, OpenStrategy.Workspace)
+		)
+	);
 }
 
 // this method is called when your extension is deactivated
