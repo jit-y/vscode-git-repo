@@ -19,7 +19,12 @@ export class Walker {
 
   async walk(file: File): Promise<null> {
     const res = await this.#callbackFn(file);
+
     if (res === WalkerOp.SkipChildren) {
+      return null;
+    }
+
+    if (!file.isDir()) {
       return null;
     }
 
