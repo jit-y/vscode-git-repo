@@ -1,14 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { Configuration } from './configuration';
 import { RepositoryManager } from './repositoryManager';
 import { OpenStrategy } from './repositoryPicker';
 
 function openAs(strategy: OpenStrategy) {
-	const rootPath = vscode.workspace.getConfiguration().get<string>("vscode-git-repo.rootPath");
+	const configuration = new Configuration();
 
-	if (rootPath != undefined) {
-		const uri = vscode.Uri.parse(rootPath);
+	if (configuration.rootPath != undefined) {
+		const uri = vscode.Uri.parse(configuration.rootPath);
 		const gitRepo = new RepositoryManager(uri);
 		gitRepo.open(strategy);
 	}
