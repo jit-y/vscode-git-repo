@@ -6,11 +6,10 @@ import { RepositoryManager } from './repositoryManager';
 import { OpenStrategy } from './repositoryPicker';
 
 function openAs(strategy: OpenStrategy) {
-	const configuration = new Configuration();
+	const cnf = new Configuration();
 
-	if (configuration.rootPath != undefined) {
-		const uri = vscode.Uri.parse(configuration.rootPath);
-		const gitRepo = new RepositoryManager(uri);
+	if (cnf.rootPathUri != undefined) {
+		const gitRepo = new RepositoryManager(cnf.rootPathUri);
 		gitRepo.open(strategy);
 	}
 }

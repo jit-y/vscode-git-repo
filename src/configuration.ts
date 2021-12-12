@@ -1,7 +1,12 @@
-import { workspace } from "vscode";
+import { Uri, workspace } from "vscode";
 
 export class Configuration {
-  get rootPath(): string | undefined {
-    return workspace.getConfiguration().get<string>("vscode-git-repo.rootPath");
+  get rootPathUri(): Uri | undefined {
+    const path = workspace.getConfiguration().get<string>("vscode-git-repo.rootPath");
+    if (path == undefined) {
+      return undefined;
+    }
+
+    return Uri.parse(path);
   }
 }
