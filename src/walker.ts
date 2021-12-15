@@ -28,9 +28,9 @@ export class Walker {
       return null;
     }
 
-    const dir = await fs.readDirectory(file.uri);
+    const dir = await fs.readDirectory(file.absUri);
     await Promise.all(dir.map(async item => {
-      const absPath = Uri.joinPath(file.uri, item[0]);
+      const absPath = Uri.joinPath(file.absUri, item[0]);
       const f = new File(absPath.fsPath, item[1]);
 
       await this.walk(f);
@@ -50,7 +50,7 @@ export async function localRepositories<T>(root: File, intoFn: (file: File) => T
       return WalkerOp.Continue;
     }
 
-    const gitUri = Uri.joinPath(repoFile.uri, ".git");
+    const gitUri = Uri.joinPath(repoFile.absUri, ".git");
 
     try {
       const stat = await fs.stat(gitUri);

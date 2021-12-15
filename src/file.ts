@@ -2,15 +2,15 @@ import { FileType, Uri } from "vscode";
 
 export class File {
   filetype: FileType;
-  #filepath: string;
+  #absPath: string;
 
-  constructor(filepath: string, filetype: FileType) {
-    this.#filepath = filepath;
+  constructor(absPath: string, filetype: FileType) {
+    this.#absPath = absPath;
     this.filetype = filetype;
   }
 
-  get uri(): Uri {
-    return Uri.parse(this.#filepath);
+  get absUri(): Uri {
+    return Uri.parse(this.#absPath);
   }
 
   isFile(): boolean {

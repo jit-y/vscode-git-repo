@@ -99,7 +99,7 @@ export class RepositoryPicker {
     const stat = await fs.stat(uri);
     const file = new File(uri.fsPath, stat.type)
 
-    const items = await localRepositories<RepositoryPickItem>(file, f => new RepositoryPickItem(f.uri));
+    const items = await localRepositories<RepositoryPickItem>(file, f => new RepositoryPickItem(f.absUri));
 
     this.#picker.items = items;
   }
